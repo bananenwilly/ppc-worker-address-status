@@ -16,6 +16,7 @@ addEventListener('fetch', event => {
 
   async function parseBody(reqBody) {
     let foundDifference = false; 
+    let answerArray = [];
     if(reqBody.hasOwnProperty("coin") && reqBody.hasOwnProperty("addresses")) {
         //valid request
         let kvInstance; 
@@ -33,19 +34,20 @@ addEventListener('fetch', event => {
         const numberInKV = await kvInstance.get(addr)
         if(numberInKV > number) {
           foundDifference = true; 
+          answerArray.push({address: addr, tx: parseInt(numberInKV)});
         }
       }
     } else {
       return new Response("bad request", {status: 400});
    }
-   return foundDifference; 
+
+   return JSON.stringify({'foundDifference': foundDifference,'addresses': answerArray}, null, 2);
   }
 
   const reqBody = await readRequestBody(request)
   const parseResult = await parseBody(reqBody)
 
-  const json = JSON.stringify({"foundDifference": parseResult}, null, 2)
-  return new Response(json, {
+  return new Response(parseResult, {
     headers: { 'content-type': 'application/json' },
   })
 }
