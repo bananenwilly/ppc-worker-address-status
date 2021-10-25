@@ -25,17 +25,18 @@ addEventListener('fetch', event => {
         } else if(reqBody.coin === "peercoinTestnet") {
           kvInstance = peercoinTestnet;
         }
-      
-      for(const element of reqBody.addresses) {
-        const addr = Object.keys(element)[0];
-        const number = element[addr];
 
-        //get data from database
-        const numberInKV = await kvInstance.get(addr)
-        if(numberInKV > number) {
-          foundDifference = true; 
-          answerArray.push({address: addr, tx: parseInt(numberInKV)});
-        }
+      for(const element of reqBody.addresses) {
+        for (var key of Object.keys(element)) {
+          const addr = key;
+          const number = element[key];
+          //get data from database
+          const numberInKV = await kvInstance.get(addr)
+          if(numberInKV > number) {
+            foundDifference = true; 
+            answerArray.push({address: addr, tx: parseInt(numberInKV)});
+          }
+        }        
       }
     } else {
       return new Response("bad request", {status: 400});
