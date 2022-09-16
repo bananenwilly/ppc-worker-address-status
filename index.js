@@ -36,7 +36,7 @@ async function handleRequest(event) {
           const number = element[key];
           //get data from database
           const addressKvData = JSON.parse(await kvInstance.get(addr));
-          if (addressKvData["n"] > number) {
+          if (addressKvData !== null && addressKvData["n"] > number) {
             foundDifference = true;
             answerArray.push({ address: addr, n: parseInt(addressKvData["n"]), utxos: addressKvData["utxos"] });
           }
